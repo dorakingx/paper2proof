@@ -8,11 +8,14 @@ from urllib.parse import urlsplit
 
 from pydantic import AnyHttpUrl, TypeAdapter
 
-from paper2proof.agents import AgentSuite
+from paper2proof.agents import AgentSuite, FixtureAgentSuite, ResearchSource
+from paper2proof.archive import EvidenceArchive
 from paper2proof.comparison import compare_claim
 from paper2proof.executors.base import ExecutionBackend
 from paper2proof.fixtures import Fixture, load_fixture
+from paper2proof.ingestion import PublicPaperIngestor
 from paper2proof.schemas import (
+    ClaimExtraction,
     CriticAssessment,
     DecisionOption,
     DecisionRequest,
@@ -23,14 +26,21 @@ from paper2proof.schemas import (
     JobRecord,
     JobRequest,
     JobStatus,
+    RiskLevel,
+    SourceReference,
     StatusTransition,
     TraceEventType,
     Verdict,
     assert_transition,
     utc_now,
 )
-from paper2proof.security import detect_prompt_injection, normalize_public_url, validate_python_code
-from paper2proof.store import InMemoryJobStore
+from paper2proof.security import (
+    SecurityViolation,
+    detect_prompt_injection,
+    normalize_public_url,
+    validate_python_code,
+)
+from paper2proof.store import JobStore
 from paper2proof.tracing import TraceRecorder
 
 
@@ -42,15 +52,19 @@ class Paper2ProofWorkflow:
     def __init__(
         self,
         *,
-        store: InMemoryJobStore,
+        store: JobStore,
         agents: AgentSuite,
         executor: ExecutionBackend,
         allowed_hosts: frozenset[str],
+        ingestor: PublicPaperIngestor | None = None,
+        archive: EvidenceArchive | None = None,
     ) -> None:
         self.store = store
         self.agents = agents
         self.executor = executor
         self.allowed_hosts = allowed_hosts
+        self.ingestor = ingestor
+        self.archive = archive
 
     async def create_job(self, request: JobRequest) -> tuple[JobRecord, bool]:
         job = JobRecord(
@@ -65,13 +79,20 @@ class Paper2ProofWorkflow:
         if job.status != JobStatus.QUEUED:
             return job
         trace = TraceRecorder(job.trace_id)
+        claim_provenance_validated = False
         try:
-            if not job.request.fixture_id:
-                raise NotImplementedError("public paper ingestion is not enabled in this build yet")
-            fixture = load_fixture(job.request.fixture_id)
+            source: ResearchSource
+            if job.request.fixture_id:
+                source = load_fixture(job.request.fixture_id)
+            else:
+                if self.ingestor is None:
+                    raise RuntimeError("public-paper ingestion is not configured")
+                source = await self.ingestor.ingest(job.request)
+            agents = FixtureAgentSuite() if isinstance(source, Fixture) else self.agents
             await self._transition(job, trace, JobStatus.INTAKE, "Started source and risk intake.")
-            job.intake = self._assess_fixture(fixture)
-            await self.agents.review_intake(job.intake, fixture.note, trace)
+            job.intake = self._assess_source(source)
+            source_text = source.note if isinstance(source, Fixture) else source.document_text
+            await agents.review_intake(job.intake, source_text, trace)
             await self._checkpoint(job, trace)
             if not job.intake.accepted:
                 await self._transition(
@@ -79,7 +100,9 @@ class Paper2ProofWorkflow:
                 )
                 return job
 
-            job.claim_extraction = await self.agents.extract_claims(fixture, trace)
+            job.claim_extraction = await agents.extract_claims(source, trace)
+            self._validate_claim_provenance(source, job.claim_extraction)
+            claim_provenance_validated = True
             await self._transition(
                 job,
                 trace,
@@ -87,10 +110,18 @@ class Paper2ProofWorkflow:
                 "A structured, source-linked numerical claim was selected.",
             )
             claim = job.claim_extraction.selected_claim
-            job.plan = await self.agents.plan(fixture, claim, trace)
+            job.plan = await agents.plan(source, claim, trace)
             if job.plan.claim_id != claim.claim_id:
                 raise ValueError("plan does not reference the selected claim")
-            validate_python_code(job.plan.code)
+            self._validate_plan_policy(job)
+            if job.intake.requires_approval and not job.plan.requires_approval:
+                job.plan = job.plan.model_copy(
+                    update={
+                        "requires_approval": True,
+                        "approval_reason": job.intake.decision_reason
+                        or "The source license or interpretation requires human review.",
+                    }
+                )
             await self._transition(
                 job,
                 trace,
@@ -98,7 +129,11 @@ class Paper2ProofWorkflow:
                 "A bounded reproduction plan passed policy validation.",
             )
 
-            if job.claim_extraction.needs_human_judgment or job.plan.requires_approval:
+            if (
+                job.intake.requires_approval
+                or job.claim_extraction.needs_human_judgment
+                or job.plan.requires_approval
+            ):
                 reason = (
                     job.plan.approval_reason
                     or job.claim_extraction.judgment_reason
@@ -128,11 +163,41 @@ class Paper2ProofWorkflow:
                     recommended_option_id="modify",
                 )
                 await self._transition(job, trace, JobStatus.AWAITING_APPROVAL, reason)
-                job.report = self._approval_report(job)
+                job.report = self._seal_report(self._approval_report(job))
+                await self._archive_report(job, trace)
                 await self._checkpoint(job, trace)
                 return job
 
-            return await self._execute_and_verify(job, trace)
+            return await self._execute_and_verify(job, trace, agents=agents)
+        except SecurityViolation as exc:
+            if not claim_provenance_validated:
+                job.claim_extraction = None
+                job.plan = None
+            job.error_code = exc.__class__.__name__
+            job.error_message = str(exc)
+            trace.add(
+                TraceEventType.GUARDRAIL,
+                "Workflow",
+                "deterministic-policy-block",
+                output_value={"reason": str(exc)},
+            )
+            if job.status not in {
+                JobStatus.COMPLETED,
+                JobStatus.PARTIAL,
+                JobStatus.BLOCKED,
+                JobStatus.FAILED,
+            }:
+                await self._transition(
+                    job,
+                    trace,
+                    JobStatus.BLOCKED,
+                    "Deterministic policy blocked the plan.",
+                )
+            if claim_provenance_validated and job.claim_extraction is not None:
+                job.report = self._seal_report(self._blocked_report(job, str(exc)))
+                await self._archive_report(job, trace)
+            await self._checkpoint(job, trace)
+            return job
         except Exception as exc:
             job.error_code = exc.__class__.__name__
             job.error_message = str(exc)
@@ -162,7 +227,10 @@ class Paper2ProofWorkflow:
             await self._transition(
                 job, trace, JobStatus.BLOCKED, decision.note or "Plan rejected by human."
             )
-            job.report = self._blocked_report(job, decision.note or "Plan rejected by human.")
+            job.report = self._seal_report(
+                self._blocked_report(job, decision.note or "Plan rejected by human.")
+            )
+            await self._archive_report(job, trace)
             job.decision = None
             await self._checkpoint(job, trace)
             return job
@@ -188,9 +256,16 @@ class Paper2ProofWorkflow:
 
         job.plan = job.plan.model_copy(update={"requires_approval": False, "approval_reason": None})
         job.decision = None
-        return await self._execute_and_verify(job, trace)
+        agents = FixtureAgentSuite() if job.request.fixture_id else self.agents
+        return await self._execute_and_verify(job, trace, agents=agents)
 
-    async def _execute_and_verify(self, job: JobRecord, trace: TraceRecorder) -> JobRecord:
+    async def _execute_and_verify(
+        self,
+        job: JobRecord,
+        trace: TraceRecorder,
+        *,
+        agents: AgentSuite,
+    ) -> JobRecord:
         if job.plan is None or job.claim_extraction is None:
             raise WorkflowInvariantError("execution requires a plan and selected claim")
         claim = job.claim_extraction.selected_claim
@@ -201,9 +276,12 @@ class Paper2ProofWorkflow:
             await self._transition(
                 job, trace, JobStatus.BLOCKED, "Execution policy blocked the plan."
             )
-            job.report = self._blocked_report(
-                job, job.execution.failure_reason or "Execution policy blocked the plan."
+            job.report = self._seal_report(
+                self._blocked_report(
+                    job, job.execution.failure_reason or "Execution policy blocked the plan."
+                )
             )
+            await self._archive_report(job, trace)
             await self._checkpoint(job, trace)
             return job
 
@@ -211,12 +289,10 @@ class Paper2ProofWorkflow:
             job, trace, JobStatus.VERIFYING, "Comparing reported and observed values."
         )
         comparison, verdict = compare_claim(claim, job.execution)
-        critic: CriticAssessment = await self.agents.critique(
+        critic: CriticAssessment = await agents.critique(
             claim, job.execution, comparison, verdict, trace
         )
-        narrative = await self.agents.report(
-            claim, job.plan, job.execution, comparison, critic, trace
-        )
+        narrative = await agents.report(claim, job.plan, job.execution, comparison, critic, trace)
         terminal = (
             JobStatus.COMPLETED
             if job.execution.status == ExecutionStatus.SUCCESS
@@ -238,12 +314,33 @@ class Paper2ProofWorkflow:
             next_decision=narrative.next_decision,
             trace_id=job.trace_id,
         )
-        canonical = report.model_dump_json(exclude={"evidence_sha256"})
-        job.report = report.model_copy(
-            update={"evidence_sha256": hashlib.sha256(canonical.encode()).hexdigest()}
-        )
+        job.report = self._seal_report(report)
+        await self._archive_report(job, trace)
         await self._checkpoint(job, trace)
         return job
+
+    @staticmethod
+    def _seal_report(report: EvidenceReport) -> EvidenceReport:
+        canonical = report.model_dump_json(exclude={"evidence_sha256"})
+        return report.model_copy(
+            update={"evidence_sha256": hashlib.sha256(canonical.encode()).hexdigest()}
+        )
+
+    async def _archive_report(self, job: JobRecord, trace: TraceRecorder) -> None:
+        if self.archive is None or job.report is None:
+            return
+        archived = await self.archive.archive(job.report)
+        job.evidence_archives.append(archived)
+        trace.add(
+            TraceEventType.TOOL_OUTPUT,
+            "Report and Action Agent",
+            "s3-evidence-archive",
+            output_value={
+                "bucket": archived.bucket,
+                "json_key": archived.json_key,
+                "evidence_sha256": archived.evidence_sha256,
+            },
+        )
 
     def _assess_fixture(self, fixture: Fixture) -> IntakeAssessment:
         normalized = normalize_public_url(
@@ -266,6 +363,56 @@ class Paper2ProofWorkflow:
             requires_approval=fixture.metadata.requires_approval,
             decision_reason=fixture.metadata.approval_reason,
         )
+
+    def _assess_source(self, source: ResearchSource) -> IntakeAssessment:
+        if isinstance(source, Fixture):
+            return self._assess_fixture(source)
+        injection_markers = detect_prompt_injection(source.document_text)
+        risks = [f"Prompt-injection marker ignored as data: {item}" for item in injection_markers]
+        risks.append("The public article license has not been independently verified.")
+        return IntakeAssessment(
+            accepted=True,
+            normalized_source_url=source.source.url,
+            normalized_repo_url=source.repo_url,
+            source_host=urlsplit(str(source.source.url)).hostname or "unknown",
+            source_license=source.source.license,
+            risk_level=RiskLevel.MEDIUM,
+            risks=risks,
+            prompt_injection_detected=bool(injection_markers),
+            requires_approval=True,
+            decision_reason=(
+                "Review the extracted interpretation and public-source license before one "
+                "bounded execution."
+            ),
+        )
+
+    @staticmethod
+    def _expected_source(source: ResearchSource) -> SourceReference:
+        if isinstance(source, Fixture):
+            return source.claim_extraction.selected_claim.source
+        return source.source
+
+    def _validate_claim_provenance(
+        self, source: ResearchSource, extraction: ClaimExtraction
+    ) -> None:
+        expected = self._expected_source(source)
+        for claim in extraction.claims:
+            if claim.source.content_sha256 != expected.content_sha256 or str(
+                claim.source.url
+            ) != str(expected.url):
+                raise SecurityViolation("claim source provenance differs from ingested content")
+
+    @staticmethod
+    def _validate_plan_policy(job: JobRecord) -> None:
+        if job.plan is None:
+            raise WorkflowInvariantError("plan policy requires a generated plan")
+        if job.plan.network_access or job.plan.external_writes:
+            raise SecurityViolation("generated plans cannot request network or external writes")
+        if job.plan.dependencies:
+            raise SecurityViolation("generated plans cannot install third-party dependencies")
+        if job.plan.timeout_seconds > job.request.execution_budget_seconds:
+            raise SecurityViolation("generated plan exceeds the user execution budget")
+        validate_python_code(job.plan.code)
 
     async def _transition(
         self,

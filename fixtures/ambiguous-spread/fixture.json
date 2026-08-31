@@ -22,5 +22,8 @@
   "timeout_seconds": 20,
   "estimated_cost_usd": 0.001,
   "expected_verdict": "INCONCLUSIVE",
+  "expected_status": "AWAITING_APPROVAL",
+  "evaluation_category": "approval",
+  "public_demo": true,
   "experiment_file": "experiment.py"
 }

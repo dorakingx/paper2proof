@@ -6,7 +6,7 @@ import asyncio
 import hashlib
 import json
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import uuid
 from datetime import UTC, datetime
 
@@ -20,6 +20,8 @@ from paper2proof.schemas import (
 )
 from paper2proof.security import SecurityViolation, validate_python_code
 from paper2proof.tracing import TraceRecorder
+
+CONTAINER_TMPFS = "/tmp:rw,noexec,nosuid,size=32m"  # noqa: S108  # nosec B108
 
 
 class DockerSandboxExecutor:
@@ -105,14 +107,15 @@ class DockerSandboxExecutor:
             "--cpus",
             "0.5",
             "--tmpfs",
-            "/tmp:rw,noexec,nosuid,size=32m",  # noqa: S108 - container-internal tmpfs
+            CONTAINER_TMPFS,
             self.image,
             "python",
             "-I",
             "-",
         ]
         try:
-            process = subprocess.run(  # noqa: S603 - fixed executable and reviewed argv
+            # The reviewed argv list above is passed without a shell.
+            process = subprocess.run(  # noqa: S603  # nosec B603
                 command,
                 input=plan.code,
                 capture_output=True,
@@ -130,7 +133,8 @@ class DockerSandboxExecutor:
                 sort_keys=True,
             )
         except subprocess.TimeoutExpired as exc:
-            subprocess.run(  # noqa: S603 - exact dedicated container name
+            # Cleanup targets the exact random container name without a shell.
+            subprocess.run(  # noqa: S603  # nosec B603
                 [self.docker_binary, "rm", "-f", container_name],
                 capture_output=True,
                 check=False,

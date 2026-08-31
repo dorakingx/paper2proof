@@ -1,55 +1,60 @@
-# Execution Plan
+# Execution plan
 
 ## Product contract
 
 An independent computational researcher submits one public source and an
-optional public code repository. Paper2Proof selects or asks approval for one
-bounded numerical claim, executes a reproducibility plan, and returns evidence
-that identifies exactly what ran and what the result does—and does not—show.
+optional public repository. Paper2Proof selects or asks approval for one
+bounded numerical claim, executes a policy-safe reproduction plan, and returns
+evidence identifying exactly what ran and what the result does—and does not—show.
 
-## Gates
+## Gate status
 
-1. **Rules and provenance** — complete Dossier, scorecard, blank-repo evidence.
-2. **Vertical slice** — Strands structured claim and plan; AgentCore Code
-   Interpreter execution; structured comparison and bundle.
-3. **Product workflow** — persisted background jobs, decision gate, retries,
-   downloads, trace UI, three demo fixtures.
-4. **Safety/evaluation** — 12 fixtures, SSRF and injection defenses, secret and
-   dependency scans, measured results without invented numbers.
-5. **Production** — AgentCore Runtime, S3/DynamoDB/SQS/CloudWatch, public web,
-   cost alert, anonymous judge path.
-6. **Presentation** — architecture PNG, README, 4-minute real demo, three
-   builder.aws articles.
-7. **Submission** — logged-out tests, final audit, Devpost submit confirmation,
-   immutable release/tag.
-
-## Vertical-slice acceptance
-
-- [x] The claim, plan, execution, comparison, and verdict validate as Pydantic.
-- [ ] `AgentCoreCodeInterpreter` runs the command; the host never executes it.
-- [x] Evidence captures region/service, session ID (redacted-safe), code,
-      language, exit/success status, stdout/stderr-equivalent response, files,
-      timestamps, and hashes.
-- [x] Strands lifecycle/tool events appear in the trace.
-- [x] Re-running the controlled fixture produces the expected terminal state.
-- [x] Failure produces a structured `FAILED` or `BLOCKED` report.
+| Gate | Status | Exit evidence |
+|---|---|---|
+| Rules and provenance | COMPLETE | official dossier, blank-repo history, public MIT repository |
+| Managed vertical slice | COMPLETE | live AgentCore Runtime + Code Interpreter PASS with session and evidence hash |
+| Product workflow | COMPLETE | durable SQS worker, persisted states, approvals, downloads, trace UI |
+| Safety and evaluation | COMPLETE | 12/12 fixture evaluation, scans, live unsafe/SSRF negatives |
+| Production | COMPLETE | public AWS URL, least-privilege IaC, encrypted state/evidence, alarms, budget |
+| Presentation package | IN PROGRESS | architecture and docs complete; video and articles need publication |
+| Devpost submission | PENDING | must end with confirmed **Submitted** status |
 
 ## Decision policy
 
 Automatic execution is allowed only for public, clearly licensed, bounded,
 CPU-sized, non-networked fixture work with no external write. Ambiguous claims,
-unclear licenses, expensive computation, network requirements, dangerous
-commands, or external mutation must stop at `AWAITING_APPROVAL` or `BLOCKED`.
+unclear licenses, expensive computation, network requirements, dangerous code,
+undeclared dependencies, or external mutation must stop at
+`AWAITING_APPROVAL` or `BLOCKED`.
 
-## Internal timeline
+## Remaining critical path
 
-| Gate | Target (JST) |
+1. Deploy and verify the privacy-hardening update that removes anonymous job
+   enumeration and DynamoDB `Scan`.
+2. Perform logged-out desktop/mobile visual QA and capture final screenshots.
+3. Commit and push the complete source, docs, IaC, evaluation, and assets;
+   verify all GitHub Actions jobs.
+4. Record a 3:45–4:15 English demo from the real public product, then upload
+   publicly to YouTube or Vimeo and verify duration/access.
+5. Publish three concise builder.aws articles, each with “Agents for Humans”
+   in its title, and record their URLs.
+6. Read the exact Builder ID email from the authenticated account; do not
+   infer it.
+7. Populate Devpost, run a logged-out link audit, submit, and independently
+   confirm both the confirmation screen and submission manager show
+   **Submitted**.
+8. Create a final immutable Git tag/release only after submission materials
+   reference the verified commit.
+
+## Internal deadlines (JST)
+
+| Milestone | Target |
 |---|---|
-| Initial public repository and Devpost draft | 2026-08-31 |
-| Managed vertical slice | 2026-09-02 |
-| Product-complete web workflow | 2026-09-06 |
-| 12-fixture evaluation and production deployment | 2026-09-09 |
-| Articles and video rough cut | 2026-09-11 |
-| Code freeze | 2026-09-13 23:59 |
-| Submission package final | 2026-09-14 12:00 |
-| Internal submit | 2026-09-14 21:00 |
+| Code/docs freeze and video capture | 2026-09-11 |
+| Articles + submission draft complete | 2026-09-12 |
+| Final logged-out audit | 2026-09-13 |
+| Internal Devpost submit | 2026-09-14 21:00 |
+| Official deadline | 2026-09-15 09:00 |
+
+The internal schedule deliberately preserves more than 12 hours for account,
+upload, or Devpost failures.

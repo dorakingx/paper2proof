@@ -14,15 +14,21 @@ class Settings(BaseSettings):
     )
 
     runtime_mode: str = "fixture"
+    store_mode: str = "memory"
+    archive_mode: str = "none"
     aws_region: str = "us-west-2"
-    bedrock_model_id: str = "global.anthropic.claude-sonnet-4-6"
+    bedrock_model_id: str = "global.amazon.nova-2-lite-v1:0"
     job_table: str = "paper2proof-jobs"
     evidence_bucket: str = ""
     queue_url: str = ""
+    agent_runtime_arn: str = ""
+    inline_jobs: bool = False
     cors_origins: str = "http://localhost:5173"
     max_source_bytes: int = Field(default=5_000_000, ge=1_000, le=20_000_000)
     execution_timeout_seconds: int = Field(default=90, ge=1, le=300)
     max_output_bytes: int = Field(default=1_000_000, ge=1_000, le=5_000_000)
+    max_api_body_bytes: int = Field(default=32_768, ge=1_024, le=1_000_000)
+    public_rate_limit_per_hour: int = Field(default=0, ge=0, le=1_000)
     docker_image: str = (
         "python@sha256:7ce4b6dfe35e55397b7cda544f8a13f191b7ae28dc5aad71fe664dbc9bc2623f"
     )
@@ -36,6 +42,20 @@ class Settings(BaseSettings):
         allowed = {"fixture", "docker", "bedrock", "agentcore"}
         if value not in allowed:
             raise ValueError(f"runtime_mode must be one of {sorted(allowed)}")
+        return value
+
+    @field_validator("store_mode")
+    @classmethod
+    def validate_store_mode(cls, value: str) -> str:
+        if value not in {"memory", "dynamodb"}:
+            raise ValueError("store_mode must be memory or dynamodb")
+        return value
+
+    @field_validator("archive_mode")
+    @classmethod
+    def validate_archive_mode(cls, value: str) -> str:
+        if value not in {"none", "s3"}:
+            raise ValueError("archive_mode must be none or s3")
         return value
 
     @property

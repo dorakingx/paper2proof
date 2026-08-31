@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350" role="img" aria-labelledby="title desc">
+  <title id="title">Paper2Proof AWS architecture</title>
+  <desc id="desc">A public browser enters through Lambda, jobs are persisted through AgentCore Runtime and queued through SQS to a worker, then Strands agents use Amazon Nova and AgentCore Code Interpreter while DynamoDB and S3 preserve evidence.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="0.55" stop-color="#0b1930"/>
+      <stop offset="1" stop-color="#10243d"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#57e1c1"/>
+      <stop offset="1" stop-color="#57a6ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#000814" flood-opacity=".42"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#6de8c8"/>
+    </marker>
+    <style>
+      text{font-family:Helvetica,Arial,sans-serif}
+      .eyebrow{font-family:Helvetica,Arial,sans-serif;font-weight:600;font-size:26px;letter-spacing:5px;fill:#70e8ca}
+      .title{font-family:Helvetica,Arial,sans-serif;font-weight:700;font-size:72px;fill:#f6fbff}
+      .subtitle{font-family:Helvetica,Arial,sans-serif;font-weight:400;font-size:30px;fill:#b5c8de}
+      .lane{font-family:Helvetica,Arial,sans-serif;font-weight:700;font-size:23px;letter-spacing:3px;fill:#8fa8c2}
+      .card-title{font-family:Helvetica,Arial,sans-serif;font-weight:700;font-size:30px;fill:#f6fbff}
+      .card-body{font-family:Helvetica,Arial,sans-serif;font-weight:400;font-size:22px;fill:#b8cbe0}
+      .small{font-family:Helvetica,Arial,sans-serif;font-weight:600;font-size:19px;fill:#70e8ca}
+      .mono{font-family:Menlo,Monaco,monospace;font-weight:500;font-size:18px;fill:#c7d8e9}
+      .box{fill:#10243b;stroke:#2f4c68;stroke-width:2}
+      .core{fill:#10293c;stroke:#5de3c5;stroke-width:3}
+      .storage{fill:#17243d;stroke:#6c83f5;stroke-width:2}
+      .line{fill:none;stroke:#6de8c8;stroke-width:4;marker-end:url(#arrow)}
+      .dash{fill:none;stroke:#55738f;stroke-width:3;stroke-dasharray:10 12}
+    </style>
+  </defs>
+
+  <rect width="2400" height="1350" fill="url(#bg)"/>
+  <circle cx="2140" cy="95" r="360" fill="#255b88" opacity=".11"/>
+  <circle cx="280" cy="1290" r="470" fill="#1ca988" opacity=".08"/>
+
+  <g transform="translate(110 94)">
+    <rect width="74" height="74" rx="20" fill="url(#accent)"/>
+    <text x="37" y="51" text-anchor="middle" font-family="ui-sans-serif,system-ui" font-weight="800" font-size="38" fill="#071521">P²</text>
+    <text x="104" y="27" class="eyebrow">AGENTS FOR HUMANS</text>
+    <text x="104" y="78" class="title">Paper2Proof</text>
+    <text x="104" y="125" class="subtitle">Claim → bounded experiment → content-addressed evidence</text>
+  </g>
+
+  <g transform="translate(110 260)">
+    <text x="0" y="0" class="lane">PUBLIC EDGE</text>
+    <text x="720" y="0" class="lane">DURABLE ORCHESTRATION</text>
+    <text x="1470" y="0" class="lane">PRIVATE AGENT PLANE</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="315" width="420" height="235" rx="28" class="box"/>
+    <rect x="650" y="315" width="420" height="235" rx="28" class="box"/>
+    <rect x="1190" y="315" width="420" height="235" rx="28" class="box"/>
+    <rect x="1730" y="315" width="560" height="235" rx="28" class="core"/>
+  </g>
+
+  <g transform="translate(150 360)">
+    <circle cx="36" cy="29" r="28" fill="#183b50" stroke="#5de3c5" stroke-width="2"/>
+    <path d="M22 26h28M18 37h36M26 16h20" stroke="#76edd1" stroke-width="4" stroke-linecap="round"/>
+    <text x="82" y="38" class="card-title">Researcher / judge</text>
+    <text x="0" y="92" class="card-body">Public arXiv or controlled demo</text>
+    <text x="0" y="126" class="card-body">No sign-up · no uploads · same origin</text>
+    <text x="0" y="174" class="small">Browser polls one random job ID</text>
+  </g>
+
+  <g transform="translate(690 360)">
+    <text x="0" y="38" class="card-title">Lambda public API</text>
+    <text x="0" y="84" class="card-body">Typed FastAPI + static web app</text>
+    <text x="0" y="118" class="card-body">32 KiB body · 30 POST/hour</text>
+    <text x="0" y="152" class="card-body">No anonymous job enumeration</text>
+    <text x="0" y="194" class="small">202 Accepted in ~5–8 seconds</text>
+  </g>
+
+  <g transform="translate(1230 360)">
+    <text x="0" y="38" class="card-title">SQS FIFO + worker</text>
+    <text x="0" y="84" class="card-body">Durable job ID dispatch</text>
+    <text x="0" y="118" class="card-body">Concurrency 2 · batch size 1</text>
+    <text x="0" y="152" class="card-body">3 attempts → encrypted DLQ</text>
+    <text x="0" y="194" class="small">CloudWatch alarm on dead letter</text>
+  </g>
+
+  <g transform="translate(1770 355)">
+    <text x="0" y="42" class="card-title">Bedrock AgentCore Runtime</text>
+    <text x="0" y="86" class="card-body">Private Python 3.13 command surface</text>
+    <text x="0" y="120" class="card-body">Persisted workflow + typed trace</text>
+    <text x="0" y="154" class="card-body">OpenTelemetry → CloudWatch / X-Ray</text>
+    <text x="0" y="199" class="small">Exact IAM endpoint · no public invoke</text>
+  </g>
+
+  <path d="M530 432 H635" class="line"/>
+  <path d="M1070 432 H1175" class="line"/>
+  <path d="M1610 432 H1715" class="line"/>
+
+  <path d="M2070 550 V625" class="line"/>
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="670" width="1240" height="420" rx="32" class="core"/>
+    <rect x="1450" y="670" width="400" height="195" rx="28" class="box"/>
+    <rect x="1890" y="670" width="400" height="195" rx="28" class="box"/>
+    <rect x="1450" y="895" width="400" height="195" rx="28" class="storage"/>
+    <rect x="1890" y="895" width="400" height="195" rx="28" class="storage"/>
+  </g>
+
+  <g transform="translate(155 720)">
+    <text x="0" y="0" class="eyebrow">STRANDS AGENTS WORKFLOW</text>
+    <text x="0" y="64" class="card-title">Six roles, one deterministic authority boundary</text>
+
+    <g transform="translate(0 112)">
+      <rect width="350" height="92" rx="20" fill="#15354a"/>
+      <text x="22" y="38" class="small">01  INTAKE &amp; RISK</text>
+      <text x="22" y="68" class="mono">public input ≠ instruction</text>
+    </g>
+    <g transform="translate(380 112)">
+      <rect width="350" height="92" rx="20" fill="#15354a"/>
+      <text x="22" y="38" class="small">02  CLAIM EXTRACTION</text>
+      <text x="22" y="68" class="mono">value · unit · tolerance</text>
+    </g>
+    <g transform="translate(760 112)">
+      <rect width="350" height="92" rx="20" fill="#15354a"/>
+      <text x="22" y="38" class="small">03  PLANNER</text>
+      <text x="22" y="68" class="mono">bounded networkless code</text>
+    </g>
+
+    <g transform="translate(0 230)">
+      <rect width="350" height="92" rx="20" fill="#15354a"/>
+      <text x="22" y="38" class="small">04  EXECUTION</text>
+      <text x="22" y="68" class="mono">approved sandbox only</text>
+    </g>
+    <g transform="translate(380 230)">
+      <rect width="350" height="92" rx="20" fill="#15354a"/>
+      <text x="22" y="38" class="small">05  VERIFY &amp; CRITIC</text>
+      <text x="22" y="68" class="mono">deterministic verdict math</text>
+    </g>
+    <g transform="translate(760 230)">
+      <rect width="350" height="92" rx="20" fill="#15354a"/>
+      <text x="22" y="38" class="small">06  REPORT &amp; ACTION</text>
+      <text x="22" y="68" class="mono">hash · trace · limitations</text>
+    </g>
+  </g>
+
+  <g transform="translate(1490 714)">
+    <text x="0" y="35" class="card-title">Amazon Nova 2 Lite</text>
+    <text x="0" y="79" class="card-body">Structured reasoning for</text>
+    <text x="0" y="112" class="card-body">public-paper roles</text>
+    <text x="0" y="155" class="small">Pinned model/profile IAM</text>
+  </g>
+
+  <g transform="translate(1930 714)">
+    <text x="0" y="35" class="card-title">Code Interpreter</text>
+    <text x="0" y="79" class="card-body">Fresh managed session</text>
+    <text x="0" y="112" class="card-body">No host code execution</text>
+    <text x="0" y="155" class="small">AgentCore provenance</text>
+  </g>
+
+  <g transform="translate(1490 939)">
+    <text x="0" y="35" class="card-title">DynamoDB</text>
+    <text x="0" y="79" class="card-body">Jobs · idempotency · rate</text>
+    <text x="0" y="112" class="card-body">PITR · TTL · encryption</text>
+    <text x="0" y="155" class="small">Deletion protected</text>
+  </g>
+
+  <g transform="translate(1930 939)">
+    <text x="0" y="35" class="card-title">Versioned S3</text>
+    <text x="0" y="79" class="card-body">Canonical evidence JSON</text>
+    <text x="0" y="112" class="card-body">Private · TLS · SHA-256</text>
+    <text x="0" y="155" class="small">Immutable evidence history</text>
+  </g>
+
+  <path d="M1850 766 H1875" class="line"/>
+  <path d="M1350 990 H1435" class="line"/>
+  <path d="M1850 990 H1875" class="line"/>
+  <path d="M1730 670 C1730 610 1480 620 1320 670" class="dash"/>
+
+  <g transform="translate(110 1188)">
+    <rect width="2180" height="92" rx="24" fill="#0c1c2c" stroke="#2f4c68" stroke-width="2"/>
+    <text x="40" y="38" class="small">AUTHORITY RULE</text>
+    <text x="260" y="40" class="card-body">Models propose. Deterministic policy and explicit human approval authorize.</text>
+    <text x="40" y="72" class="mono">QUEUED → INTAKE → CLAIMS_EXTRACTED → PLAN_READY → EXECUTING → VERIFYING → COMPLETED</text>
+  </g>
+</svg>

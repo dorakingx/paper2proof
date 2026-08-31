@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
+from typing import Literal
 
 from pydantic import AnyHttpUrl, Field
 
@@ -11,6 +12,7 @@ from paper2proof.schemas import (
     Claim,
     ClaimExtraction,
     ExperimentPlan,
+    JobStatus,
     RiskLevel,
     SourceReference,
     StrictModel,
@@ -37,6 +39,19 @@ class FixtureMetadata(StrictModel):
     timeout_seconds: int = Field(ge=1, le=60)
     estimated_cost_usd: float = Field(ge=0, le=0.05)
     expected_verdict: Verdict
+    expected_status: JobStatus
+    evaluation_category: Literal[
+        "golden",
+        "mismatch",
+        "dependency",
+        "approval",
+        "prompt-injection",
+        "unsafe",
+    ]
+    public_demo: bool = False
+    dependencies: list[str] = Field(default_factory=list, max_length=20)
+    network_access: bool = False
+    external_writes: bool = False
     experiment_file: str
 
 
@@ -83,7 +98,7 @@ class Fixture:
             plan_id=f"plan_{suffix}",
             claim_id=claim.claim_id,
             code=self.code,
-            dependencies=[],
+            dependencies=self.metadata.dependencies,
             command_display="python -I - < approved_experiment.py",
             expected_artifacts=[],
             success_criteria=[
@@ -92,8 +107,8 @@ class Fixture:
                 "Observed value is compared with the declared tolerance",
             ],
             timeout_seconds=self.metadata.timeout_seconds,
-            network_access=False,
-            external_writes=False,
+            network_access=self.metadata.network_access,
+            external_writes=self.metadata.external_writes,
             estimated_cost_usd=self.metadata.estimated_cost_usd,
             risk_level=self.metadata.risk_level,
             requires_approval=self.metadata.requires_approval,
@@ -102,12 +117,20 @@ class Fixture:
 
 
 def repository_root() -> Path:
-    return Path(__file__).resolve().parents[4]
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "fixtures").is_dir():
+            return parent
+    raise RuntimeError("controlled fixture directory is missing from the application package")
 
 
-def list_fixtures() -> list[str]:
+def list_fixtures(*, public_only: bool = False) -> list[str]:
     root = repository_root() / "fixtures"
-    return sorted(path.name for path in root.iterdir() if (path / "fixture.json").is_file())
+    fixture_ids = sorted(path.name for path in root.iterdir() if (path / "fixture.json").is_file())
+    if not public_only:
+        return fixture_ids
+    return [
+        fixture_id for fixture_id in fixture_ids if load_fixture(fixture_id).metadata.public_demo
+    ]
 
 
 def load_fixture(fixture_id: str) -> Fixture:

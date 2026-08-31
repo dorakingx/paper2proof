@@ -364,6 +364,16 @@ class EvidenceReport(StrictModel):
         return self
 
 
+class EvidenceArchiveRecord(StrictModel):
+    bucket: NonEmpty
+    json_key: NonEmpty
+    markdown_key: NonEmpty
+    json_etag: str | None = None
+    markdown_etag: str | None = None
+    evidence_sha256: Sha256
+    archived_at: datetime = Field(default_factory=utc_now)
+
+
 class JobRequest(StrictModel):
     fixture_id: str | None = None
     paper_url: AnyHttpUrl | None = None
@@ -393,6 +403,7 @@ class JobRecord(StrictModel):
     plan: ExperimentPlan | None = None
     execution: ExecutionRecord | None = None
     report: EvidenceReport | None = None
+    evidence_archives: list[EvidenceArchiveRecord] = Field(default_factory=list)
     decision: DecisionRequest | None = None
     error_code: str | None = None
     error_message: str | None = None

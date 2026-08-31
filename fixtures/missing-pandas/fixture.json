@@ -1,0 +1,23 @@
+{
+  "fixture_id": "missing-pandas",
+  "title": "Controlled Technical Note: Unapproved pandas Dependency",
+  "source_url": "https://github.com/dorakingx/paper2proof/blob/main/fixtures/missing-pandas/note.md",
+  "license": "MIT",
+  "locator": "paragraph 1",
+  "excerpt": "The plan requests pandas to compute a median of 5.0 units, but third-party installation is outside the bounded demo policy.",
+  "reported_value": 5.0,
+  "unit": "units",
+  "tolerance_absolute": 0.000001,
+  "conditions": ["Install and import pandas"],
+  "ambiguity": [],
+  "requires_approval": false,
+  "approval_reason": null,
+  "risk_level": "HIGH",
+  "timeout_seconds": 20,
+  "estimated_cost_usd": 0.001,
+  "expected_verdict": "BLOCKED",
+  "expected_status": "BLOCKED",
+  "evaluation_category": "dependency",
+  "dependencies": ["pandas==2.3.2"],
+  "experiment_file": "experiment.py"
+}

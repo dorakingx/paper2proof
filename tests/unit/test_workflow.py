@@ -111,3 +111,21 @@ async def test_execution_error_is_structured_failure() -> None:
     assert job.status == JobStatus.FAILED
     assert job.report is not None
     assert job.report.verdict == Verdict.INCONCLUSIVE
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("fixture_id", ["missing-numpy", "missing-pandas", "dangerous-host-access"])
+async def test_deterministic_policy_violation_is_auditable_block(
+    fixture_id: str,
+) -> None:
+    executor = StubExecutor()
+    selected = workflow(executor)
+
+    job = await create_and_run(selected, fixture_id, f"blocked-{fixture_id}")
+
+    assert job.status == JobStatus.BLOCKED
+    assert job.error_code == "SecurityViolation"
+    assert job.report is not None and job.report.verdict == Verdict.BLOCKED
+    assert job.execution is None
+    assert executor.calls == 0
+    assert any(event.name == "deterministic-policy-block" for event in job.trace)

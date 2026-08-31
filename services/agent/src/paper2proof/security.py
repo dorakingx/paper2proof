@@ -124,7 +124,7 @@ def normalize_public_url(
         raise SecurityViolation(f"host is not on the source allowlist: {host}")
 
     try:
-        _reject_non_public_ip(host)
+        ipaddress.ip_address(host)
     except ValueError:
         if resolve_dns:
             try:
@@ -137,6 +137,8 @@ def normalize_public_url(
                 raise SecurityViolation("source hostname resolved to no addresses") from None
             for address in addresses:
                 _reject_non_public_ip(str(address))
+    else:
+        _reject_non_public_ip(host)
 
     port = parts.port
     if port not in (None, 443):

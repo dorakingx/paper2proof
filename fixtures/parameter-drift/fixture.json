@@ -20,5 +20,8 @@
   "timeout_seconds": 20,
   "estimated_cost_usd": 0.001,
   "expected_verdict": "MISMATCH",
+  "expected_status": "COMPLETED",
+  "evaluation_category": "mismatch",
+  "public_demo": true,
   "experiment_file": "experiment.py"
 }

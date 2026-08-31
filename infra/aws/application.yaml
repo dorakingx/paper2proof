@@ -1,0 +1,273 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Public Paper2Proof API and same-origin web application
+
+Parameters:
+  ArtifactKey:
+    Type: String
+    Description: Versioned S3 key for the Lambda deployment zip
+  AgentRuntimeArn:
+    Type: String
+    Description: Exact private AgentCore Runtime ARN invoked by the public API
+
+Resources:
+  JobDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: paper2proof-jobs-dlq.fifo
+      FifoQueue: true
+      MessageRetentionPeriod: 1209600
+      SqsManagedSseEnabled: true
+      Tags:
+        - Key: Project
+          Value: Paper2Proof
+
+  JobQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: paper2proof-jobs.fifo
+      FifoQueue: true
+      MessageRetentionPeriod: 86400
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: 3600
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt JobDeadLetterQueue.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Project
+          Value: Paper2Proof
+
+  ApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: paper2proof-public-api
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: paper2proof-api-least-privilege
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: WriteFunctionLogs
+                Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/paper2proof-public-api:*"
+              - Sid: InvokePaper2ProofRuntime
+                Effect: Allow
+                Action: bedrock-agentcore:InvokeAgentRuntime
+                Resource:
+                  - !Ref AgentRuntimeArn
+                  - !Sub "${AgentRuntimeArn}/runtime-endpoint/DEFAULT"
+              - Sid: ConsumePublicDemoRateLimit
+                Effect: Allow
+                Action: dynamodb:UpdateItem
+                Resource: !Sub "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/paper2proof-jobs"
+                Condition:
+                  ForAllValues:StringLike:
+                    dynamodb:LeadingKeys:
+                      - "RATE#*"
+              - Sid: DispatchBackgroundJob
+                Effect: Allow
+                Action: sqs:SendMessage
+                Resource: !GetAtt JobQueue.Arn
+
+  WorkerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: paper2proof-job-worker
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: paper2proof-worker-least-privilege
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: WriteWorkerLogs
+                Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/paper2proof-job-worker:*"
+              - Sid: ConsumeJobQueue
+                Effect: Allow
+                Action:
+                  - sqs:ChangeMessageVisibility
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:ReceiveMessage
+                Resource: !GetAtt JobQueue.Arn
+              - Sid: InvokePaper2ProofRuntime
+                Effect: Allow
+                Action: bedrock-agentcore:InvokeAgentRuntime
+                Resource:
+                  - !Ref AgentRuntimeArn
+                  - !Sub "${AgentRuntimeArn}/runtime-endpoint/DEFAULT"
+
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: /aws/lambda/paper2proof-public-api
+      RetentionInDays: 30
+
+  WorkerLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: /aws/lambda/paper2proof-job-worker
+      RetentionInDays: 30
+
+  ApiFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: ApiLogGroup
+    Properties:
+      FunctionName: paper2proof-public-api
+      Description: Same-origin Paper2Proof UI and typed proxy to AgentCore Runtime
+      Architectures:
+        - arm64
+      Runtime: python3.13
+      Handler: handler.handler
+      Role: !GetAtt ApiRole.Arn
+      Code:
+        S3Bucket: paper2proof-artifacts-291877508281-us-west-2
+        S3Key: !Ref ArtifactKey
+      MemorySize: 512
+      Timeout: 180
+      Environment:
+        Variables:
+          PAPER2PROOF_RUNTIME_MODE: agentcore
+          PAPER2PROOF_STORE_MODE: dynamodb
+          PAPER2PROOF_ARCHIVE_MODE: s3
+          PAPER2PROOF_AWS_REGION: us-west-2
+          PAPER2PROOF_AGENT_RUNTIME_ARN: !Ref AgentRuntimeArn
+          PAPER2PROOF_CORS_ORIGINS: ""
+          PAPER2PROOF_MAX_API_BODY_BYTES: "32768"
+          PAPER2PROOF_PUBLIC_RATE_LIMIT_PER_HOUR: "30"
+          PAPER2PROOF_QUEUE_URL: !Ref JobQueue
+      Tags:
+        - Key: Project
+          Value: Paper2Proof
+        - Key: Hackathon
+          Value: AgentsForHumans
+
+  ApiUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt ApiFunction.Arn
+      AuthType: NONE
+      InvokeMode: BUFFERED
+
+  ApiUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ApiFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: "*"
+      FunctionUrlAuthType: NONE
+
+  ApiInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ApiFunction
+      Action: lambda:InvokeFunction
+      Principal: "*"
+      InvokedViaFunctionUrl: true
+
+  WorkerFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: WorkerLogGroup
+    Properties:
+      FunctionName: paper2proof-job-worker
+      Description: Durable SQS worker invoking the private Paper2Proof AgentCore Runtime
+      Architectures:
+        - arm64
+      Runtime: python3.13
+      Handler: worker.handler
+      Role: !GetAtt WorkerRole.Arn
+      Code:
+        S3Bucket: paper2proof-artifacts-291877508281-us-west-2
+        S3Key: !Ref ArtifactKey
+      MemorySize: 512
+      Timeout: 600
+      Environment:
+        Variables:
+          PAPER2PROOF_RUNTIME_MODE: agentcore
+          PAPER2PROOF_AWS_REGION: us-west-2
+          PAPER2PROOF_AGENT_RUNTIME_ARN: !Ref AgentRuntimeArn
+      Tags:
+        - Key: Project
+          Value: Paper2Proof
+        - Key: Hackathon
+          Value: AgentsForHumans
+
+  WorkerEventSource:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !GetAtt JobQueue.Arn
+      FunctionName: !Ref WorkerFunction
+      BatchSize: 1
+      Enabled: true
+      FunctionResponseTypes:
+        - ReportBatchItemFailures
+      ScalingConfig:
+        MaximumConcurrency: 2
+
+  ApiErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: paper2proof-public-api-errors
+      AlarmDescription: Public demo API returned one or more Lambda errors
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ApiFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+
+  DeadLetterAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: paper2proof-job-dead-lettered
+      AlarmDescription: A background Paper2Proof job exhausted its bounded retries
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt JobDeadLetterQueue.QueueName
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+
+Outputs:
+  PublicUrl:
+    Value: !GetAtt ApiUrl.FunctionUrl
+  FunctionName:
+    Value: !Ref ApiFunction
+  QueueUrl:
+    Value: !Ref JobQueue
+  WorkerFunctionName:
+    Value: !Ref WorkerFunction

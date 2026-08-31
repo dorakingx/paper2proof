@@ -12,17 +12,16 @@
 
 - OpenAI Codex is used as an AI coding and research assistant.
 - Standard open-source frameworks and libraries include Strands Agents,
-  Amazon Bedrock AgentCore SDK, FastAPI, Pydantic, React, Vite, pytest, and
-  Playwright. Exact versions are locked in repository lockfiles.
+  Amazon Bedrock AgentCore SDK, FastAPI, Pydantic, Mangum, boto3, pypdf,
+  pytest, and AWS CDK. Exact versions are locked in repository lockfiles.
 - The architecture and implementation are original to this submission; no
   existing personal project repository is being repackaged.
 
 ## External sources and fixtures
 
-Each final fixture will identify its source URL, paper or note license, code
-license, exact excerpt location, and whether any asset is copied. Full PDFs are
-not redistributed. The controlled fixtures created in this repository are MIT
-licensed with the code unless stated otherwise.
+Each fixture identifies its source URL, note license, exact locator, and
+excerpt. Full papers are not redistributed. The 12 controlled fixtures were
+created for this repository and are MIT licensed with the code.
 
 ## Runtime truth labels
 

@@ -1,0 +1,25 @@
+{
+  "fixture_id": "tolerance-breach",
+  "title": "Controlled Technical Note: Tight Tolerance Breach",
+  "source_url": "https://github.com/dorakingx/paper2proof/blob/main/fixtures/tolerance-breach/note.md",
+  "license": "MIT",
+  "locator": "paragraph 1",
+  "excerpt": "The arithmetic mean of 4, 5, 6 is reported as 4.99 units with an absolute tolerance of 0.001.",
+  "reported_value": 4.99,
+  "unit": "units",
+  "tolerance_absolute": 0.001,
+  "conditions": [
+    "Use all three observations exactly once",
+    "Do not round the observed mean before comparison"
+  ],
+  "ambiguity": [],
+  "requires_approval": false,
+  "approval_reason": null,
+  "risk_level": "LOW",
+  "timeout_seconds": 20,
+  "estimated_cost_usd": 0.001,
+  "expected_verdict": "MISMATCH",
+  "expected_status": "COMPLETED",
+  "evaluation_category": "mismatch",
+  "experiment_file": "experiment.py"
+}

@@ -1,0 +1,25 @@
+{
+  "fixture_id": "reproducible-geomean",
+  "title": "Controlled Technical Note: Reference Geometric Mean",
+  "source_url": "https://github.com/dorakingx/paper2proof/blob/main/fixtures/reproducible-geomean/note.md",
+  "license": "MIT",
+  "locator": "paragraph 1",
+  "excerpt": "For observations 1, 4, 16, the geometric mean is reported as 4.0 units.",
+  "reported_value": 4.0,
+  "unit": "units",
+  "tolerance_absolute": 0.000001,
+  "conditions": [
+    "Use the three positive observations exactly once",
+    "Compute the geometric mean"
+  ],
+  "ambiguity": [],
+  "requires_approval": false,
+  "approval_reason": null,
+  "risk_level": "LOW",
+  "timeout_seconds": 20,
+  "estimated_cost_usd": 0.001,
+  "expected_verdict": "PASS",
+  "expected_status": "COMPLETED",
+  "evaluation_category": "golden",
+  "experiment_file": "experiment.py"
+}

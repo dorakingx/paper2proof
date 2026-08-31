@@ -10,8 +10,13 @@ node_modules/
 dist/
 .next/
 coverage/
+.coverage
 playwright-report/
 test-results/
 cdk.out/
 .agentcore/
-
+agentcore/.cli/
+agentcore/.cache/
+agentcore/Paper2ProofRuntime/
+agentcore/Paper2ProofRuntime-package.zip
+agentcore/Paper2ProofRuntime.zip

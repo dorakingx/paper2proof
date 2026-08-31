@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schema.agentcore.aws.dev/v1/agentcore.json",
+  "name": "Paper2Proof",
+  "version": 1,
+  "managedBy": "CDK",
+  "tags": {
+    "Project": "Paper2Proof",
+    "Hackathon": "AgentsForHumans",
+    "ManagedBy": "AgentCoreCLI"
+  },
+  "runtimes": [
+    {
+      "name": "Paper2ProofRuntime",
+      "description": "Auditable claim-to-evidence workflow using Strands Agents",
+      "build": "CodeZip",
+      "entrypoint": "services/runtime/main.py",
+      "codeLocation": ".",
+      "runtimeVersion": "PYTHON_3_13",
+      "networkMode": "PUBLIC",
+      "protocol": "HTTP",
+      "instrumentation": {
+        "enableOtel": true
+      },
+      "additionalPolicies": [
+        "agentcore/policies/runtime-policy.json"
+      ],
+      "envVars": [
+        { "name": "PAPER2PROOF_RUNTIME_MODE", "value": "agentcore" },
+        { "name": "PAPER2PROOF_STORE_MODE", "value": "dynamodb" },
+        { "name": "PAPER2PROOF_ARCHIVE_MODE", "value": "s3" },
+        { "name": "PAPER2PROOF_AWS_REGION", "value": "us-west-2" },
+        { "name": "AWS_DEFAULT_REGION", "value": "us-west-2" },
+        {
+          "name": "PYTHONPATH",
+          "value": "/var/task:/var/task/services/agent/src"
+        },
+        {
+          "name": "PAPER2PROOF_BEDROCK_MODEL_ID",
+          "value": "global.amazon.nova-2-lite-v1:0"
+        },
+        { "name": "PAPER2PROOF_JOB_TABLE", "value": "paper2proof-jobs" },
+        {
+          "name": "PAPER2PROOF_EVIDENCE_BUCKET",
+          "value": "paper2proof-evidence-291877508281-us-west-2"
+        }
+      ],
+      "lifecycleConfiguration": {
+        "idleRuntimeSessionTimeout": 300,
+        "maxLifetime": 900
+      }
+    }
+  ],
+  "memories": [],
+  "knowledgeBases": [],
+  "credentials": [],
+  "evaluators": [],
+  "onlineEvalConfigs": [],
+  "agentCoreGateways": [],
+  "policyEngines": [],
+  "configBundles": [],
+  "abTests": [],
+  "harnesses": [],
+  "datasets": [],
+  "payments": []
+}

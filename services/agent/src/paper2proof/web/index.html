@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Paper2Proof turns one computational-paper claim into bounded, auditable reproduction evidence."
+    />
+    <title>Paper2Proof — Claims into evidence</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">Skip to workspace</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Paper2Proof home">
+        <span class="brand-mark" aria-hidden="true">P²</span>
+        <span>Paper2Proof</span>
+      </a>
+      <nav aria-label="Project links">
+        <a href="#how-it-works">How it works</a>
+        <a href="https://github.com/dorakingx/paper2proof/blob/main/docs/architecture.md" rel="noreferrer">Architecture ↗</a>
+        <a href="https://github.com/dorakingx/paper2proof" rel="noreferrer">Source ↗</a>
+      </nav>
+      <div class="runtime-chip" id="runtime-chip">
+        <span class="pulse" aria-hidden="true"></span>
+        <span id="runtime-label">Checking runtime</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="eyebrow"><span>Agents for Humans</span><span>Research integrity</span></div>
+        <h1 id="hero-title">A paper says it works.<br /><em>Now show the evidence.</em></h1>
+        <p class="hero-copy">
+          Paper2Proof selects one bounded numerical claim, proposes a reproducible experiment,
+          pauses when scientific judgment matters, and returns a content-addressed claim-to-evidence trail.
+        </p>
+        <div class="hero-actions">
+          <button class="button button-primary" type="button" data-run-fixture="reproducible-mean">
+            Run the 60-second proof
+          </button>
+          <a class="button button-ghost" href="#how-it-works">See the agent workflow</a>
+        </div>
+        <dl class="hero-metrics" aria-label="Product guarantees">
+          <div><dt>6</dt><dd>specialized roles</dd></div>
+          <div><dt>12/12</dt><dd>contract fixtures passed</dd></div>
+          <div><dt>0</dt><dd>unapproved external writes</dd></div>
+        </dl>
+      </section>
+
+      <section class="workspace-shell" id="workspace" aria-labelledby="workspace-title">
+        <div class="workspace-heading">
+          <div>
+            <p class="section-kicker">Evidence workspace</p>
+            <h2 id="workspace-title">Choose a controlled demo or inspect a public paper.</h2>
+          </div>
+          <p class="microcopy">No sign-up. No paper upload. Public sources only.</p>
+        </div>
+
+        <div class="workspace-grid">
+          <aside class="source-panel" aria-label="Source configuration">
+            <div class="tab-list" role="tablist" aria-label="Source type">
+              <button class="tab active" role="tab" aria-selected="true" data-tab="fixtures">
+                Controlled demos
+              </button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="paper">
+                Public arXiv
+              </button>
+            </div>
+
+            <div class="tab-panel active" id="fixtures-panel" data-panel="fixtures">
+              <p class="panel-intro">
+                Three transparent fixtures prove the workflow can pass, disagree, and stop.
+              </p>
+              <div class="fixture-list" id="fixture-list" aria-live="polite"></div>
+            </div>
+
+            <div class="tab-panel" id="paper-panel" data-panel="paper" hidden>
+              <form id="paper-form">
+                <label for="paper-url">arXiv abstract or PDF URL</label>
+                <input
+                  id="paper-url"
+                  name="paper_url"
+                  type="url"
+                  required
+                  placeholder="https://arxiv.org/abs/2401.12345"
+                  autocomplete="url"
+                />
+                <label for="repo-url">Public GitHub repository <span>optional</span></label>
+                <input
+                  id="repo-url"
+                  name="repo_url"
+                  type="url"
+                  placeholder="https://github.com/owner/repository"
+                  autocomplete="url"
+                />
+                <label for="claim-hint">What should we verify? <span>optional</span></label>
+                <textarea
+                  id="claim-hint"
+                  name="claim_hint"
+                  rows="3"
+                  maxlength="500"
+                  placeholder="The reported mean score in Table 2…"
+                ></textarea>
+                <div class="boundary-note">
+                  <strong>Approval boundary</strong>
+                  <p>Every public-paper plan pauses before execution for source and interpretation review.</p>
+                </div>
+                <button class="button button-primary button-full" type="submit">Build evidence plan</button>
+              </form>
+            </div>
+          </aside>
+
+          <section class="run-panel" aria-label="Current evidence run">
+            <div class="empty-state" id="empty-state">
+              <div class="empty-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+              <p class="section-kicker">Ready for a source</p>
+              <h3>One claim. One bounded run.<br />Every step accounted for.</h3>
+              <p>Select a demo on the left to watch the agent workflow assemble real evidence.</p>
+            </div>
+
+            <div class="job-view" id="job-view" hidden>
+              <header class="job-header">
+                <div>
+                  <p class="job-id" id="job-id"></p>
+                  <h3 id="job-title">Building evidence</h3>
+                </div>
+                <span class="status-badge" id="job-status">QUEUED</span>
+              </header>
+
+              <ol class="state-rail" id="state-rail" aria-label="Workflow progress"></ol>
+
+              <div class="alert" id="job-alert" role="status" hidden></div>
+
+              <section class="decision-card" id="decision-card" hidden>
+                <div class="decision-icon" aria-hidden="true">!</div>
+                <div>
+                  <p class="section-kicker">Human decision required</p>
+                  <h4 id="decision-reason"></h4>
+                  <label for="decision-note">Decision note <span>optional</span></label>
+                  <textarea id="decision-note" rows="2" placeholder="Record what you reviewed…"></textarea>
+                  <div class="decision-actions" id="decision-actions"></div>
+                </div>
+              </section>
+
+              <div class="evidence-grid">
+                <article class="evidence-card" id="claim-card">
+                  <p class="card-label">01 / Claim</p>
+                  <h4 id="claim-statement">Waiting for claim extraction…</h4>
+                  <dl class="detail-list" id="claim-details"></dl>
+                </article>
+                <article class="evidence-card" id="plan-card">
+                  <p class="card-label">02 / Bounded plan</p>
+                  <h4 id="plan-title">Waiting for a policy-safe plan…</h4>
+                  <pre><code id="plan-code">No code generated.</code></pre>
+                </article>
+                <article class="evidence-card result-card" id="result-card">
+                  <p class="card-label">03 / Observed evidence</p>
+                  <div class="verdict-lockup">
+                    <strong id="verdict">PENDING</strong>
+                    <span id="comparison-summary">The sandbox has not returned an observation.</span>
+                  </div>
+                  <dl class="detail-list" id="execution-details"></dl>
+                  <div class="download-actions" id="download-actions" hidden>
+                    <a class="button button-small" id="download-json" href="#">Evidence JSON</a>
+                    <a class="button button-small" id="download-markdown" href="#">Readable report</a>
+                  </div>
+                </article>
+              </div>
+
+              <details class="trace-drawer" open>
+                <summary><span>Agent and tool trace</span><span id="trace-count">0 events</span></summary>
+                <ol id="trace-list"></ol>
+              </details>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="workflow-section" id="how-it-works" aria-labelledby="workflow-title">
+        <div class="workflow-copy">
+          <p class="section-kicker">Designed for agency, not chat</p>
+          <h2 id="workflow-title">The agents do the busywork.<br />Humans keep the judgment.</h2>
+          <p>
+            The workflow continues in the background, but crossing a scientific or safety boundary
+            always creates a concrete decision with visible consequences.
+          </p>
+        </div>
+        <ol class="role-map">
+          <li><span>01</span><div><strong>Intake & Risk</strong><p>Normalizes public sources and treats every document as untrusted data.</p></div></li>
+          <li><span>02</span><div><strong>Claim Extraction</strong><p>Links one numerical claim to exact source content and a declared tolerance.</p></div></li>
+          <li><span>03</span><div><strong>Reproduction Planner</strong><p>Proposes one CPU-sized, networkless experiment under hard policy limits.</p></div></li>
+          <li><span>04</span><div><strong>Execution</strong><p>Runs approved code only inside a declared isolated backend—not on the host.</p></div></li>
+          <li><span>05</span><div><strong>Verification & Critic</strong><p>Audits limitations while deterministic code owns the numerical verdict.</p></div></li>
+          <li><span>06</span><div><strong>Report & Action</strong><p>Packages provenance, timestamps, hashes, trace, and the next human decision.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="principles" aria-label="Product principles">
+        <blockquote>“A successful run is evidence—not proof that a paper is true.”</blockquote>
+        <div>
+          <p><strong>Model ≠ authority.</strong> Deterministic policy owns URLs, code, budgets, state transitions, and verdict math.</p>
+          <p><strong>Provenance ≠ decoration.</strong> Local, recorded, and AgentCore results are impossible to confuse in the schema.</p>
+          <p><strong>Failure ≠ silence.</strong> Blocked and failed paths produce structured reasons instead of disappearing.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">P²</span><span>Paper2Proof</span></div>
+      <p>Built in public for the Agents for Humans Hackathon · MIT licensed</p>
+      <a href="https://github.com/dorakingx/paper2proof">Audit the source ↗</a>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

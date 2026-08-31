@@ -31,19 +31,19 @@ if shown by the form, will not be used.
 | Entrant is an eligible individual resident in Japan | PASS | Japan is not in the official excluded-jurisdiction list; submitter will select Individual / Japan. Conflict-of-interest self-attestation remains the entrant's responsibility. |
 | Project newly created during 2026-08-10–2026-09-14 | PASS | Blank Git repository initialized 2026-08-31; disclosure and Git history preserve provenance. |
 | Pre-existing code/work disclosed | PASS | No project code imported; frameworks and Codex use disclosed in `docs/disclosures.md`. |
-| Strands Agents SDK is a required core technology | UNKNOWN | Dependency pinned and design fixed; runtime trace evidence pending vertical slice. |
-| Agent performs end-to-end real work, not only chat | UNKNOWN | State machine and six-role workflow specified; golden-path run pending. |
-| Public GitHub/GitLab/Bitbucket URL | UNKNOWN | GitHub authentication and repo creation pending. |
-| All source/assets/setup instructions public | UNKNOWN | Initial source is being created; clean-clone audit pending. |
-| MIT or Apache license detectable in repository About | UNKNOWN | MIT file exists locally; detection requires public GitHub audit. |
+| Strands Agents SDK is a required core technology | PASS | Strands 1.54.0 is pinned; live public-paper traces show agent/tool events across Intake, Claim Extraction, and Planner. |
+| Agent performs end-to-end real work, not only chat | PASS | Durable six-role workflow creates, queues, plans, executes/gates, verifies, archives, and reports without an open chat loop. |
+| Public GitHub/GitLab/Bitbucket URL | PASS | https://github.com/dorakingx/paper2proof is public. |
+| All source/assets/setup instructions public | PASS | Source, fixtures, evaluation, IaC, architecture source, and setup commands are in the repository. Final clean-clone CI remains a release check. |
+| MIT or Apache license detectable in repository About | PASS | GitHub detects the root MIT license; anonymous raw fetch verified. |
 | README included | PASS | `README.md` exists; final links/results remain pending and labeled. |
-| Architecture diagram submitted | UNKNOWN | Source diagram and ≥1920px PNG pending. |
+| Architecture diagram submitted | PASS | `docs/architecture.png` is 2400×1350 with editable SVG source. Devpost upload remains. |
 | Public YouTube/Vimeo video ≤5:00 | UNKNOWN | Script and real-product capture pending. |
 | Video shows working project + problem + user + importance | UNKNOWN | Must be verified from final upload. |
 | AWS Builder ID supplied | UNKNOWN | Exact Builder ID email must be read from authenticated AWS profile; never guessed. |
-| Free, unrestricted judging access until 2026-10-08 17:00 PDT | UNKNOWN | Production URL and service-lifetime check pending. |
-| Submission materials in English | PASS | Repository and planned submission artifacts use English. |
-| Third-party APIs/data/code are licensed and authorized | UNKNOWN | Controlled fixtures will carry provenance; final SBOM/license audit pending. |
+| Free, unrestricted judging access until 2026-10-08 17:00 PDT | PASS | Public no-sign-in AWS URL is live; Retain policies preserve state/evidence. Final logged-out recheck remains. |
+| Submission materials in English | PASS | Repository, application, and prepared submission artifacts use English. |
+| Third-party APIs/data/code are licensed and authorized | PASS | Controlled fixtures are MIT; public PDFs are fetched, hashed, excerpt-bounded, and not redistributed; dependencies are locked and disclosed. |
 | Bonus content public before deadline | UNKNOWN | Three evidence-backed builder.aws articles planned after vertical slice. |
 | Devpost status is Submitted | UNKNOWN | Must not change until confirmation screen and submission manager both verify. |
 
