@@ -25,14 +25,14 @@ that identifies exactly what ran and what the result does—and does not—show.
 
 ## Vertical-slice acceptance
 
-- [ ] The claim, plan, execution, comparison, and verdict validate as Pydantic.
+- [x] The claim, plan, execution, comparison, and verdict validate as Pydantic.
 - [ ] `AgentCoreCodeInterpreter` runs the command; the host never executes it.
-- [ ] Evidence captures region/service, session ID (redacted-safe), code,
+- [x] Evidence captures region/service, session ID (redacted-safe), code,
       language, exit/success status, stdout/stderr-equivalent response, files,
       timestamps, and hashes.
-- [ ] Strands lifecycle/tool events appear in the trace.
-- [ ] Re-running the controlled fixture produces the expected terminal state.
-- [ ] Failure produces a structured `FAILED` or `BLOCKED` report.
+- [x] Strands lifecycle/tool events appear in the trace.
+- [x] Re-running the controlled fixture produces the expected terminal state.
+- [x] Failure produces a structured `FAILED` or `BLOCKED` report.
 
 ## Decision policy
 
