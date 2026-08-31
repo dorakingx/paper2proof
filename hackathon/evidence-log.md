@@ -154,9 +154,23 @@ SHA-256 `be6fae33d39558827ea078c42c51e39f513dd308e3ea7c110bb10370c02afbf9`.
 - Local final MP4 SHA-256:
   `c6383cc3817f368898f04cf3d1eeec96a9f6ccc590f48c0214bc47cb8c209478`
 
+## AWS Builder Center bonus articles
+
+All three articles were published from the authenticated `dorakingx` Builder
+profile on 2026-09-01 JST. Each title contains the exact phrase `Agents for
+Humans`; anonymous HTTP requests returned 200 for all three URLs.
+
+| Article | Public URL | Anonymous check |
+|---|---|---:|
+| Agents for Humans: Turning a paper claim into evidence with Paper2Proof | https://builder.aws.com/content/3IhG4Wzvjq3mT4Z3PybT1TzjYxE/agents-for-humans-turning-a-paper-claim-into-evidence-with-paper2proof | 200 |
+| Agents for Humans: A Durable AgentCore Workflow | https://builder.aws.com/content/3IhGUvAhZ6b0S8haL5BEyAMppP0/agents-for-humans-a-durable-agentcore-workflow | 200 |
+| Agents for Humans: When Stopping Is Agent Success | https://builder.aws.com/content/3IhGko62tQxPGWDVRSHqefe5tPc/agents-for-humans-when-stopping-is-agent-success | 200 |
+
+The exact AWS Builder ID email was also observed in the authenticated account.
+It is intentionally not stored in the public repository and will be entered
+directly into Devpost.
+
 ## Still required for submission
 
-- publish three builder.aws posts containing the exact phrase “Agents for
-  Humans” in their titles;
-- obtain and verify the exact AWS Builder ID email;
+- complete any entrant eligibility/conflict self-attestation shown by Devpost;
 - complete Devpost fields and verify the project status is **Submitted**.

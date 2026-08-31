@@ -153,15 +153,16 @@ CloudFormation, pytest, Docker.
 - Source: https://github.com/dorakingx/paper2proof
 - Architecture: https://github.com/dorakingx/paper2proof/blob/main/docs/architecture.png
 - Demo video: https://youtu.be/4YJcxveYEyk
-- Builder article 1: **[PUBLIC URL REQUIRED]**
-- Builder article 2: **[PUBLIC URL REQUIRED]**
-- Builder article 3: **[PUBLIC URL REQUIRED]**
+- Builder article 1: https://builder.aws.com/content/3IhG4Wzvjq3mT4Z3PybT1TzjYxE/agents-for-humans-turning-a-paper-claim-into-evidence-with-paper2proof
+- Builder article 2: https://builder.aws.com/content/3IhGUvAhZ6b0S8haL5BEyAMppP0/agents-for-humans-a-durable-agentcore-workflow
+- Builder article 3: https://builder.aws.com/content/3IhGko62tQxPGWDVRSHqefe5tPc/agents-for-humans-when-stopping-is-agent-success
 
 ## Required entrant fields
 
 - Submitter type: Individual
 - Country of residence: Japan
-- AWS Builder ID email: **[READ FROM AUTHENTICATED ACCOUNT; DO NOT GUESS]**
+- AWS Builder ID email: verified in the authenticated Builder Center account on
+  2026-09-01; enter it directly in Devpost and do not commit it to this repository
 - Repository license: MIT
 - Video visibility: Public; embedding enabled; duration ≤ 5:00
 

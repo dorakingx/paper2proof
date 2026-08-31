@@ -4,6 +4,8 @@
 
 [Launch the live AWS demo](https://ptvrh62d34oqwkz4x6cjtbvxgm0yaimi.lambda-url.us-west-2.on.aws/) · [Watch the 4:21 demo](https://youtu.be/4YJcxveYEyk) · [Architecture](docs/architecture.md) · [Evaluation](docs/evaluation.md) · [Security](docs/security.md)
 
+Builder notes: [claim to evidence](https://builder.aws.com/content/3IhG4Wzvjq3mT4Z3PybT1TzjYxE/agents-for-humans-turning-a-paper-claim-into-evidence-with-paper2proof) · [durable AgentCore workflow](https://builder.aws.com/content/3IhGUvAhZ6b0S8haL5BEyAMppP0/agents-for-humans-a-durable-agentcore-workflow) · [responsible-agent evaluation](https://builder.aws.com/content/3IhGko62tQxPGWDVRSHqefe5tPc/agents-for-humans-when-stopping-is-agent-success)
+
 Paper2Proof is an autonomous research reproducibility steward for independent
 computational researchers and small teams. Give it one public paper or a
 controlled demo. Six specialized Strands agents identify a bounded numerical

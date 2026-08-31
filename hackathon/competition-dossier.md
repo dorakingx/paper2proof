@@ -1,6 +1,6 @@
 # Competition Dossier
 
-Last verified: 2026-08-31 JST
+Last verified: 2026-09-01 JST
 
 This dossier treats the official rules as authoritative over the overview,
 FAQ, updates, or submission-form labels. `UNKNOWN` means evidence is still
@@ -40,11 +40,11 @@ if shown by the form, will not be used.
 | Architecture diagram submitted | PASS | `docs/architecture.png` is 2400×1350 with editable SVG source. Devpost upload remains. |
 | Public YouTube/Vimeo video ≤5:00 | PASS | https://youtu.be/4YJcxveYEyk is public and embeddable; YouTube reports 261 seconds. |
 | Video shows working project + problem + user + importance | PASS | The final capture shows the public AWS product, PASS workflow and trace, human gate, unsafe block, real-paper stop, architecture, evaluation, and user value. |
-| AWS Builder ID supplied | UNKNOWN | Exact Builder ID email must be read from authenticated AWS profile; never guessed. |
+| AWS Builder ID supplied | PASS | Exact account email was observed in the authenticated Builder Center profile on 2026-09-01 and is withheld from the public repository; enter it directly in Devpost. |
 | Free, unrestricted judging access until 2026-10-08 17:00 PDT | PASS | Public no-sign-in AWS URL is live; Retain policies preserve state/evidence. Final logged-out recheck remains. |
 | Submission materials in English | PASS | Repository, application, and prepared submission artifacts use English. |
 | Third-party APIs/data/code are licensed and authorized | PASS | Controlled fixtures are MIT; public PDFs are fetched, hashed, excerpt-bounded, and not redistributed; dependencies are locked and disclosed. |
-| Bonus content public before deadline | UNKNOWN | Three evidence-backed builder.aws articles planned after vertical slice. |
+| Bonus content public before deadline | PASS | Three public builder.aws articles contain the exact title phrase `Agents for Humans`; all three returned anonymous HTTP 200 on 2026-09-01. |
 | Devpost status is Submitted | UNKNOWN | Must not change until confirmation screen and submission manager both verify. |
 
 ## Dates and internal gates

@@ -53,10 +53,10 @@ UNKNOWN block Devpost submission.
 
 ## Bonus content
 
-- [ ] Three builder.aws posts are public before the deadline.
-- [ ] Every title contains exact phrase Agents for Humans.
-- [ ] No post relies on the stale #AgentsofFootball form text.
-- [ ] All three logged-out URLs resolve and are copied into Devpost.
+- [x] Three builder.aws posts are public before the deadline.
+- [x] Every title contains exact phrase Agents for Humans.
+- [x] No post relies on the stale #AgentsofFootball form text.
+- [x] All three logged-out URLs resolve and are ready for Devpost.
 
 ## Devpost
 
