@@ -34,6 +34,10 @@ from paper2proof.store import InMemoryJobStore
 from paper2proof.tracing import TraceRecorder
 
 
+class WorkflowInvariantError(RuntimeError):
+    """Raised when persisted state violates an internal workflow contract."""
+
+
 class Paper2ProofWorkflow:
     def __init__(
         self,
@@ -163,7 +167,8 @@ class Paper2ProofWorkflow:
             await self._checkpoint(job, trace)
             return job
         if decision.option_id == "modify":
-            assert job.decision is not None
+            if job.decision is None:
+                raise WorkflowInvariantError("awaiting-approval job has no decision request")
             job.error_code = "PLAN_MODIFICATION_REQUIRED"
             job.error_message = decision.note or "A clarified interpretation is required."
             job.decision = job.decision.model_copy(
@@ -186,8 +191,8 @@ class Paper2ProofWorkflow:
         return await self._execute_and_verify(job, trace)
 
     async def _execute_and_verify(self, job: JobRecord, trace: TraceRecorder) -> JobRecord:
-        assert job.plan is not None
-        assert job.claim_extraction is not None
+        if job.plan is None or job.claim_extraction is None:
+            raise WorkflowInvariantError("execution requires a plan and selected claim")
         claim = job.claim_extraction.selected_claim
         await self._transition(job, trace, JobStatus.EXECUTING, "Started one bounded sandbox run.")
         job.execution = await self.executor.execute(job.plan, trace)
@@ -296,7 +301,8 @@ class Paper2ProofWorkflow:
 
     @staticmethod
     def _approval_report(job: JobRecord) -> EvidenceReport:
-        assert job.claim_extraction is not None
+        if job.claim_extraction is None:
+            raise WorkflowInvariantError("approval report requires a selected claim")
         reason = job.decision.reason if job.decision else "Human judgment is required."
         return EvidenceReport(
             job_id=job.job_id,
@@ -312,7 +318,8 @@ class Paper2ProofWorkflow:
 
     @staticmethod
     def _blocked_report(job: JobRecord, reason: str) -> EvidenceReport:
-        assert job.claim_extraction is not None
+        if job.claim_extraction is None:
+            raise WorkflowInvariantError("blocked report requires a selected claim")
         return EvidenceReport(
             job_id=job.job_id,
             terminal_status=JobStatus.BLOCKED,

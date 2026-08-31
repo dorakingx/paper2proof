@@ -14,8 +14,10 @@ Paper2Proof is built around a deterministic six-role **Strands Agents**
 workflow rather than a chat interface. Amazon Bedrock AgentCore Runtime hosts
 the agent service; AgentCore Code Interpreter supplies the sandbox boundary.
 
-> Build status: active hackathon implementation. Public URLs and measured
-> evaluation results are added only after they have been verified.
+> Build status: active hackathon implementation. The source is public at
+> [github.com/dorakingx/paper2proof](https://github.com/dorakingx/paper2proof).
+> Live AWS and web URLs, and measured evaluation results, are added only after
+> they have been independently verified.
 
 ## Why an agent, not a chatbot
 
@@ -32,14 +34,18 @@ to a decision center instead of being guessed.
 Unsafe, ambiguous, expensive, licensed-unclear, or externally mutating plans
 branch to `AWAITING_APPROVAL`, `BLOCKED`, or `PARTIAL` with a structured reason.
 
-## Current stack
+## Implementation status
 
-- Strands Agents SDK 1.54.0 with structured Pydantic outputs and lifecycle hooks
-- Amazon Bedrock with `global.anthropic.claude-sonnet-4-6`
-- Amazon Bedrock AgentCore Runtime and Code Interpreter
-- FastAPI agent API; React/Vite web experience
-- DynamoDB job state, S3 evidence bundles, SQS background dispatch
-- CloudWatch Logs, metrics, and OpenTelemetry traces
+- [x] Strands Agents SDK 1.54.0 roles, structured Pydantic outputs, and hooks
+- [x] Explicit state machine, decision gate, deterministic comparison, and
+      downloadable JSON/Markdown evidence
+- [x] FastAPI API and three controlled PASS/MISMATCH/INCONCLUSIVE fixtures
+- [x] Hardened local Docker fallback with pinned image, disabled network,
+      read-only root, dropped capabilities, resource limits, and provenance
+- [x] AgentCore Code Interpreter adapter with direct Strands tool calls
+- [ ] Verified live Amazon Bedrock and AgentCore execution
+- [ ] Durable DynamoDB/S3/SQS state and production AgentCore Runtime
+- [ ] Public web experience and CloudWatch/OpenTelemetry observability
 
 ## Development
 
@@ -48,12 +54,14 @@ sandbox fallback, and AWS credentials for live AgentCore integration tests.
 
 ```bash
 uv sync --all-groups
-uv run pytest
+uv run pytest -q --cov=paper2proof --cov-report=term
 uv run paper2proof run-fixture reproducible-mean
 ```
 
-The fixture mode never presents cached or synthetic output as an AgentCore
-result. Runtime provenance is included in every evidence report.
+The fixture and local Docker modes never present their output as an AgentCore
+result. Runtime provenance is included in every evidence report. The current
+contract suite contains 57 tests and enforces at least 85% branch-aware
+coverage; the verified local result is 88.29%.
 
 ## Disclosure
 

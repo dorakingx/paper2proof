@@ -95,7 +95,7 @@ class RiskLevel(StrEnum):
 
 
 class Verdict(StrEnum):
-    PASS = "PASS"  # noqa: S105 - scientific verdict, not a password
+    PASS = "PASS"  # nosec B105  # noqa: S105 - scientific verdict, not a password
     PARTIAL = "PARTIAL"
     MISMATCH = "MISMATCH"
     INCONCLUSIVE = "INCONCLUSIVE"
