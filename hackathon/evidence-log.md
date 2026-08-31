@@ -16,6 +16,7 @@ work is never represented as a pass.
 | AgentCore CDK dependency audit | PASS | npm audit; 0 vulnerabilities |
 | Deterministic Lambda package build | PASS | two builds produced byte-identical SHA-256 |
 | Architecture diagram | PASS | `docs/architecture.png`, 2400×1350 |
+| Public CI on production commit | PASS | https://github.com/dorakingx/paper2proof/actions/runs/33390100698 — quality/contracts, dependency/source security, and secret-history scan all passed |
 
 Two warnings in the test run originate in upstream FastAPI TestClient and
 AgentCore SDK deprecation paths; there are no failing tests.

@@ -20,7 +20,7 @@ UNKNOWN block Devpost submission.
 - [x] 12-case evaluation artifact reports 12/12 with honest runtime truth.
 - [x] Tests, lint, strict type-check, dependency audit, and source scan pass.
 - [x] Privacy-hardening deployment removes public list and Runtime Scan.
-- [ ] GitHub Actions all pass on the final commit.
+- [x] GitHub Actions quality/contracts, security, and secret-history jobs pass.
 
 ## Public experience
 
@@ -38,9 +38,9 @@ UNKNOWN block Devpost submission.
 - [x] Architecture PNG is 2400×1350 and SVG source is public.
 - [x] Evaluation JSON and transparent fixtures are public.
 - [x] Contribution and conduct docs exist.
-- [ ] Final commit pushed; clean clone installs and tests.
-- [ ] Repository About description/topics/license are correct.
-- [ ] No secret, credential, cookie, private email, or irrelevant artifact is
+- [x] Production commit pushed; CI clean checkout installs and tests.
+- [x] Repository About description, live homepage, topics, and MIT license are correct.
+- [x] No secret, credential, cookie, private email, or irrelevant artifact is
   tracked anywhere in Git history.
 
 ## Video
