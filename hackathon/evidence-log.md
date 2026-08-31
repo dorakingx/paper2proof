@@ -1,6 +1,6 @@
 # Evidence log
 
-Last updated: 2026-08-31 JST. This file records observed results only. Planned
+Last updated: 2026-09-01 JST. This file records observed results only. Planned
 work is never represented as a pass.
 
 ## Repository and quality
@@ -140,9 +140,22 @@ SHA-256 `be6fae33d39558827ea078c42c51e39f513dd308e3ea7c110bb10370c02afbf9`.
 - logged-out Chrome desktop 1440×1000 and responsive 500×844 hero views:
   visually inspected; no overflow after the mobile metric fix.
 
+## Public demo video
+
+- URL: https://youtu.be/4YJcxveYEyk
+- Channel ID: `UC3xjDoAdqmNA_mUfccK5n2g` (`doraking_en` selection)
+- Published: 2026-09-01 JST
+- Duration: 261 seconds (4:21), below the five-minute limit
+- Visibility and access: public; anonymous HTTP fetch reports
+  `playabilityStatus=OK`, `playableInEmbed=true`, and `isPrivate=false`
+- Accessibility: English (United States) timed subtitles uploaded from the
+  versioned final SRT; custom 16:9 thumbnail uploaded
+- Platform checks: copyright and Community Guidelines both reported no issues
+- Local final MP4 SHA-256:
+  `c6383cc3817f368898f04cf3d1eeec96a9f6ccc590f48c0214bc47cb8c209478`
+
 ## Still required for submission
 
-- publish a public ≤5-minute YouTube/Vimeo demo;
 - publish three builder.aws posts containing the exact phrase “Agents for
   Humans” in their titles;
 - obtain and verify the exact AWS Builder ID email;

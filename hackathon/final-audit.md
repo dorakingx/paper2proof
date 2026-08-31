@@ -45,11 +45,11 @@ UNKNOWN block Devpost submission.
 
 ## Video
 
-- [ ] Final video is public YouTube/Vimeo, embeddable, and ≤5:00.
-- [ ] Working product, problem, user, importance, architecture, and result shown.
-- [ ] Magic moment appears in first 60 seconds.
-- [ ] English captions are accurate and readable.
-- [ ] Logged-out playback and URL verified.
+- [x] Final video is public YouTube, embeddable, and 4:21.
+- [x] Working product, problem, user, importance, architecture, and result shown.
+- [x] Magic moment appears in first 60 seconds.
+- [x] English captions are accurate and readable.
+- [x] Logged-out playback and URL verified.
 
 ## Bonus content
 

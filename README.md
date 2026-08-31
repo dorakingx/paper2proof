@@ -2,7 +2,7 @@
 
 > From computational papers to reproducible evidence, without the busywork.
 
-[Launch the live AWS demo](https://ptvrh62d34oqwkz4x6cjtbvxgm0yaimi.lambda-url.us-west-2.on.aws/) · [Architecture](docs/architecture.md) · [Evaluation](docs/evaluation.md) · [Security](docs/security.md)
+[Launch the live AWS demo](https://ptvrh62d34oqwkz4x6cjtbvxgm0yaimi.lambda-url.us-west-2.on.aws/) · [Watch the 4:21 demo](https://youtu.be/4YJcxveYEyk) · [Architecture](docs/architecture.md) · [Evaluation](docs/evaluation.md) · [Security](docs/security.md)
 
 Paper2Proof is an autonomous research reproducibility steward for independent
 computational researchers and small teams. Give it one public paper or a

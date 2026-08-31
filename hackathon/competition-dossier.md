@@ -36,10 +36,10 @@ if shown by the form, will not be used.
 | Public GitHub/GitLab/Bitbucket URL | PASS | https://github.com/dorakingx/paper2proof is public. |
 | All source/assets/setup instructions public | PASS | Source, fixtures, evaluation, IaC, architecture source, and setup commands are in the repository. Final clean-clone CI remains a release check. |
 | MIT or Apache license detectable in repository About | PASS | GitHub detects the root MIT license; anonymous raw fetch verified. |
-| README included | PASS | `README.md` exists; final links/results remain pending and labeled. |
+| README included | PASS | `README.md` includes the public demo, video, architecture, evaluation, security, setup, results, and disclosures. |
 | Architecture diagram submitted | PASS | `docs/architecture.png` is 2400×1350 with editable SVG source. Devpost upload remains. |
-| Public YouTube/Vimeo video ≤5:00 | UNKNOWN | Script and real-product capture pending. |
-| Video shows working project + problem + user + importance | UNKNOWN | Must be verified from final upload. |
+| Public YouTube/Vimeo video ≤5:00 | PASS | https://youtu.be/4YJcxveYEyk is public and embeddable; YouTube reports 261 seconds. |
+| Video shows working project + problem + user + importance | PASS | The final capture shows the public AWS product, PASS workflow and trace, human gate, unsafe block, real-paper stop, architecture, evaluation, and user value. |
 | AWS Builder ID supplied | UNKNOWN | Exact Builder ID email must be read from authenticated AWS profile; never guessed. |
 | Free, unrestricted judging access until 2026-10-08 17:00 PDT | PASS | Public no-sign-in AWS URL is live; Retain policies preserve state/evidence. Final logged-out recheck remains. |
 | Submission materials in English | PASS | Repository, application, and prepared submission artifacts use English. |

@@ -152,7 +152,7 @@ CloudFormation, pytest, Docker.
 - Live demo: https://ptvrh62d34oqwkz4x6cjtbvxgm0yaimi.lambda-url.us-west-2.on.aws/
 - Source: https://github.com/dorakingx/paper2proof
 - Architecture: https://github.com/dorakingx/paper2proof/blob/main/docs/architecture.png
-- Demo video: **[PUBLIC YOUTUBE OR VIMEO URL REQUIRED]**
+- Demo video: https://youtu.be/4YJcxveYEyk
 - Builder article 1: **[PUBLIC URL REQUIRED]**
 - Builder article 2: **[PUBLIC URL REQUIRED]**
 - Builder article 3: **[PUBLIC URL REQUIRED]**
