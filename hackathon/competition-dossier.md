@@ -17,7 +17,7 @@ required; it is not treated as a pass.
 | Resources | https://agentsforhumans.devpost.com/resources | 2026-08-31 | Current Strands and AgentCore links; $50 credit request cutoff. |
 | Updates | https://agentsforhumans.devpost.com/updates | 2026-08-31 | Make Strands unmistakable, do end-to-end work, protect keys, pitch rather than tutorial. |
 | Project gallery | https://agentsforhumans.devpost.com/project-gallery | 2026-08-31 | Gallery not yet published; no current-event entries can be audited publicly. |
-| Submission manager | https://devpost.com/submit-to/30317-agents-for-humans-hackathon/manage/submissions | 2026-08-31 | Registration exists per entrant; event project not yet created. |
+| Submission manager | https://devpost.com/submit-to/30317-agents-for-humans-hackathon/manage/submissions | 2026-09-01 | Paper2Proof card independently verified as `Submitted`. |
 
 Official rules were updated 2026-08-12 to remove a hashtag requirement. The
 substantive current instruction is to include the exact phrase `Agents for
@@ -37,15 +37,15 @@ if shown by the form, will not be used.
 | All source/assets/setup instructions public | PASS | Source, fixtures, evaluation, IaC, architecture source, and setup commands are in the repository. Final clean-clone CI remains a release check. |
 | MIT or Apache license detectable in repository About | PASS | GitHub detects the root MIT license; anonymous raw fetch verified. |
 | README included | PASS | `README.md` includes the public demo, video, architecture, evaluation, security, setup, results, and disclosures. |
-| Architecture diagram submitted | PASS | `docs/architecture.png` is 2400×1350 with editable SVG source. Devpost upload remains. |
+| Architecture diagram submitted | PASS | `docs/architecture.png` is 2400×1350 with editable SVG source; the PNG is saved in the Devpost form and the public story renders the diagram. |
 | Public YouTube/Vimeo video ≤5:00 | PASS | https://youtu.be/4YJcxveYEyk is public and embeddable; YouTube reports 261 seconds. |
 | Video shows working project + problem + user + importance | PASS | The final capture shows the public AWS product, PASS workflow and trace, human gate, unsafe block, real-paper stop, architecture, evaluation, and user value. |
-| AWS Builder ID supplied | PASS | Exact account email was observed in the authenticated Builder Center profile on 2026-09-01 and is withheld from the public repository; enter it directly in Devpost. |
-| Free, unrestricted judging access until 2026-10-08 17:00 PDT | PASS | Public no-sign-in AWS URL is live; Retain policies preserve state/evidence. Final logged-out recheck remains. |
+| AWS Builder ID supplied | PASS | Exact account email was observed in the authenticated Builder Center profile and entered directly in Devpost on 2026-09-01; it remains withheld from the public repository. |
+| Free, unrestricted judging access until 2026-10-08 17:00 PDT | PASS | Public no-sign-in AWS URL is live; Retain policies preserve state/evidence; anonymous HTTP 200 was rechecked immediately before submission. |
 | Submission materials in English | PASS | Repository, application, and prepared submission artifacts use English. |
 | Third-party APIs/data/code are licensed and authorized | PASS | Controlled fixtures are MIT; public PDFs are fetched, hashed, excerpt-bounded, and not redistributed; dependencies are locked and disclosed. |
 | Bonus content public before deadline | PASS | Three public builder.aws articles contain the exact title phrase `Agents for Humans`; all three returned anonymous HTTP 200 on 2026-09-01. |
-| Devpost status is Submitted | UNKNOWN | Must not change until confirmation screen and submission manager both verify. |
+| Devpost status is Submitted | PASS | Submitted 2026-09-01 06:13:56 JST. The post-submit banner said `Project submitted!`; the separate submission-manager page independently labeled the Paper2Proof card `Submitted`. |
 
 ## Dates and internal gates
 

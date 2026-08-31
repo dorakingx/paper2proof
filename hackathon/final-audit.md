@@ -5,7 +5,7 @@ UNKNOWN block Devpost submission.
 
 ## Eligibility and provenance
 
-- [ ] Entrant confirms Individual, Japan, eligibility, and no conflict.
+- [x] Entrant confirms Individual, Japan, eligibility, and no conflict.
 - [x] Project created on/after 2026-08-10; initial Git history preserved.
 - [x] Codex/framework/fixture provenance disclosed.
 - [x] Public MIT repository and license detection verified logged out.
@@ -60,18 +60,18 @@ UNKNOWN block Devpost submission.
 
 ## Devpost
 
-- [ ] New event-specific project exists.
-- [ ] Track is Professional Agents.
-- [ ] Submitter type is Individual; country is Japan.
-- [ ] Exact AWS Builder ID email copied from authenticated account.
-- [ ] Public repo, live demo, video, architecture image, and article URLs entered.
-- [ ] English description contains no placeholder or unsupported claim.
-- [ ] Preview has no broken formatting or truncated critical text.
-- [ ] Every link passes a logged-out audit.
-- [ ] Final Submit action completed before 2026-09-14 21:00 JST.
-- [ ] Confirmation screen shows Submitted.
-- [ ] Submission manager independently shows Submitted.
-- [ ] Confirmation screenshot/time/URL recorded in evidence log.
+- [x] New event-specific project exists.
+- [x] Track is Professional Agents.
+- [x] Submitter type is Individual; country is Japan.
+- [x] Exact AWS Builder ID email copied from authenticated account.
+- [x] Public repo, live demo, video, architecture image, and article URLs entered.
+- [x] English description contains no placeholder or unsupported claim.
+- [x] Preview has no broken formatting or truncated critical text.
+- [x] Every external link passes an anonymous HTTP audit.
+- [x] Final Submit action completed at 2026-09-01 06:13:56 JST.
+- [x] Confirmation screen shows `Project submitted!`.
+- [x] Submission manager independently shows `Submitted`.
+- [x] Confirmation time and URLs recorded in evidence log.
 
 ## Post-submit freeze
 

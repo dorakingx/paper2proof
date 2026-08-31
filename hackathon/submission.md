@@ -149,6 +149,7 @@ CloudFormation, pytest, Docker.
 
 ## Links
 
+- Devpost: https://devpost.com/software/paper2proof
 - Live demo: https://ptvrh62d34oqwkz4x6cjtbvxgm0yaimi.lambda-url.us-west-2.on.aws/
 - Source: https://github.com/dorakingx/paper2proof
 - Architecture: https://github.com/dorakingx/paper2proof/blob/main/docs/architecture.png
@@ -165,6 +166,8 @@ CloudFormation, pytest, Docker.
   2026-09-01; enter it directly in Devpost and do not commit it to this repository
 - Repository license: MIT
 - Video visibility: Public; embedding enabled; duration ≤ 5:00
+- Devpost status: Submitted at 2026-09-01 06:13:56 JST; confirmation banner and
+  submission-manager card independently verified
 
 ## Honest disclosure
 

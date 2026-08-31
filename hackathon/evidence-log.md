@@ -170,7 +170,21 @@ The exact AWS Builder ID email was also observed in the authenticated account.
 It is intentionally not stored in the public repository and will be entered
 directly into Devpost.
 
-## Still required for submission
+## Devpost submission
 
-- complete any entrant eligibility/conflict self-attestation shown by Devpost;
-- complete Devpost fields and verify the project status is **Submitted**.
+- Project page: https://devpost.com/software/paper2proof
+- Submission manager:
+  https://devpost.com/submit-to/30317-agents-for-humans-hackathon/manage/submissions
+- Submitted: 2026-09-01 06:13:56 JST
+- Immediate confirmation: the public project page displayed
+  `Project submitted! Continue to edit your project until the hackathon deadline`.
+- Independent confirmation: after a fresh navigation to the submission manager,
+  the Paper2Proof card displayed `Submitted`.
+- Final public-preview audit: YouTube player, project story, AWS architecture,
+  live-demo link, public repository, Built With values, and all three Builder
+  article links rendered. The demo, repository, video, and all three Builder
+  article URLs returned anonymous HTTP 200 immediately before submission.
+- Devpost fields record Individual / Japan, Professional Agents, the exact
+  authenticated AWS Builder ID email, public demo and repository, public video,
+  architecture PNG, testing instructions, and bonus-content evidence. The email
+  remains intentionally absent from this public repository.
