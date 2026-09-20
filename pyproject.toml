@@ -7,18 +7,18 @@ requires-python = ">=3.12,<3.14"
 license = { text = "MIT" }
 authors = [{ name = "Tomoya Hatanaka" }]
 dependencies = [
-  "bedrock-agentcore==1.22.0",
+  "bedrock-agentcore==1.23.1",
   "boto3>=1.40.0,<2",
-  "botocore[crt]==1.43.83",
+  "botocore[crt]==1.43.96",
   "fastapi>=0.116.0,<1",
   "httpx>=0.28.0,<1",
-  "mangum==0.19.0",
+  "mangum==0.22.0",
   "pydantic>=2.11.0,<3",
   "pydantic-settings>=2.10.0,<3",
-  "pypdf==6.16.2",
+  "pypdf==6.19.0",
   "python-multipart>=0.0.20,<1",
-  "strands-agents==1.54.0",
-  "strands-agents-tools[agent-core-code-interpreter]==0.8.7",
+  "strands-agents==1.56.0",
+  "strands-agents-tools[agent-core-code-interpreter]==0.8.9",
   "uvicorn[standard]>=0.35.0,<1",
 ]
 
